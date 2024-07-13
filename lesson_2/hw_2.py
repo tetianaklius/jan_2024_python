@@ -5,17 +5,18 @@
 from typing import Callable
 
 
-def notebook() -> list[Callable[[str], None], Callable[[None], list], ...]:
-    todos_list = []
+def notebook():
+    todo_list: list[str] = []
 
     def add_todo(todo: str) -> None:
-        nonlocal todos_list
-        todos_list.append(todo)
+        nonlocal todo_list
+        todo_list.append(todo)
 
     def get_todos() -> list[str]:
-        for item in todos_list:
+        nonlocal todo_list
+        for item in todo_list:
             print(f'-- {item}')
-        return todos_list
+        return todo_list.copy()
 
     return [add_todo, get_todos]
 
@@ -53,14 +54,14 @@ def expanded_form(num: int) -> str:
 
 n = expanded_form(32)
 print(n)
-# 3
+# 3 digits
 n = expanded_form(322)
 print(n)
 n = expanded_form(350)
 print(n)
 n = expanded_form(302)
 print(n)
-# 4
+# 4 digits
 n = expanded_form(3555)
 print(n)
 n = expanded_form(3550)
@@ -75,31 +76,48 @@ n = expanded_form(3005)
 print(n)
 n = expanded_form(3000)
 print(n)
-# 5
+# 5 digits
 n = expanded_form(70304)
 print(n)
 n = expanded_form(72304)
 print(n)
 n = expanded_form(70005)
 print(n)
-# x
+# x digits
 n = expanded_form(13555555512)
 print(n)
 
 print("*****")
+
+
+# ---------------> added part
+# ex. 3 mentor version
+
+# def expanded_form(num: int) -> str:
+#     st = str(num)
+#     length = len(st) - 1
+#     res = []
+#     for i, ch in enumerate(st):
+#         if ch != "0":
+#             res.append(ch + "0" * (length - i))
+#     return f"{' + '.join(res)} = {st}"
+
+# ---------------> the end of added part
 
 # 4) створити декоратор котрий буде підраховувати скільки разів була запущена функція продекорована цим декоратором,
 # та буде виводити це значення після виконання функцій
 
 
 def counter(func: Callable) -> Callable[[], int]:
-    def inner():
-        inner.count += 1
-        func()
-        print(f'count = {inner.count}\n*')
-        return inner.count
+    count = 0
 
-    inner.count = 0
+    def inner():
+        nonlocal count
+        count += 1
+        func()
+        print(f'count = {count}\n*')
+        return count
+
     return inner
 
 
